@@ -1,2 +1,2 @@
-01_air_quality_anlysis.ipynb (For Testing)
-air_quality_anlysis.ipynb (Main)
+01_weather_forecast_anlysis.ipynb (For Testing)
+weather_forecast_anlysis.ipynb (Main)
