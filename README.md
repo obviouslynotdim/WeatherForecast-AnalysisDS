@@ -122,17 +122,7 @@ cd cambodia-weather-forecast-analysis
 pip install -r requirements.txt
 ```
 
-### 3️⃣ Fetch Data
-
-Run your data collection script:
-
-```bash
-python fetch_weather.py
-```
-
----
-
-### 4️⃣ Run Jupyter Notebook
+### 3️⃣ Run Jupyter Notebook
 
 ```bash
 jupyter notebook
@@ -144,6 +134,14 @@ Open:
 notebooks/weather_forecast_analysis.ipynb
 ```
 
+You can also open the model-comparison notebooks:
+
+```
+notebooks/linear_regression/linear_regression.ipynb
+notebooks/dicision_tree/dicision_tree.ipynb
+notebooks/raindom_forest/random_forest.ipynb
+```
+
 ---
 
 # 📁 Folder Structure
@@ -151,12 +149,16 @@ notebooks/weather_forecast_analysis.ipynb
 ```
 cambodia-weather-forecast-analysis/
 │
-├── data/                 # Generated weather dataset (CSV)
-├── scripts/              # API data collection scripts
-├── notebooks/            # Jupyter notebooks
-│
+├── data/                           # Weather dataset CSV files
+├── notebooks/                      # EDA and modeling notebooks
+│   ├── weather_forecast_analysis.ipynb
+│   ├── linear_regression/
+│   ├── dicision_tree/
+│   └── raindom_forest/
+├── MODEL_ANALYSIS.md               # Model interpretation and findings
 ├── README.md
 ├── requirements.txt
+├── requirement.txt                 # Legacy copy kept for compatibility
 └── .gitignore
 ```
 
@@ -168,7 +170,17 @@ cambodia-weather-forecast-analysis/
 * ✅ Multi-province Cambodia dataset
 * ✅ Automated data pipeline
 * ✅ EDA + visualization
-* ✅ Forecast-ready dataset
+* ✅ Regression model comparison and evaluation
+
+---
+
+# 🧾 Workflow Summary
+
+1. Collect and consolidate weather data from Open-Meteo API.
+2. Perform data cleaning and exploratory analysis in the main notebook.
+3. Train and evaluate multiple regression baselines.
+4. Compare results using RMSE, MAE, and R2.
+5. Document interpretation, limitations, and improvement ideas.
 
 ---
 
