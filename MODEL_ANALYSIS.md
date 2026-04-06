@@ -5,9 +5,15 @@
 We implemented a **Random Forest Regressor** to predict Cambodia's next-day maximum temperature. The model uses 4 features (previous day's max temp, current min temp, previous day's rainfall, and wind speed) and was trained on 16,430 historical samples with testing on 4,108 recent samples.
 
 **Key Performance:**
-- **Test RMSE: 2.77°C** (average prediction error)
-- **Test R² Score: 0.1517** (explains ~15% of variance)
-- **Model explains only 15.2% of temperature variability in test data**
+
+| Metric | Score | Interpretation |
+|--------|-------|-----------------|
+| **Test Accuracy (R²)** | 0.1517 (15.17%) | Explains 15% of temperature variance |
+| **Test RMSE** | 2.77°C | Average prediction error |
+| **Test MAE** | 2.23°C | Average absolute error |
+| **Predictions within ±2°C** | 50.6% | Half of predictions within 2°C |
+
+⚠️ **Important:** Model performance is MODERATE. Use for trend forecasting, not critical applications.
 
 ---
 
@@ -117,7 +123,67 @@ R² Score            0.6328             0.1517             -76.0%
 
 ---
 
-## 5. KEY FINDINGS & OBSERVATIONS
+## ❓ CAN I PREDICT ANY MONTH/DAY/YEAR?
+
+### Short Answer: **NO** - With Important Limitations
+
+| Question | Answer | Details |
+|----------|--------|---------|
+| **Can I predict Apr 15, 2025?** | ✓ YES | Within trained data range (2015-2026) |
+| **Can I predict Dec 25, 2026?** | ⚠️ MAYBE | At edge of test data; low confidence |
+| **Can I predict Jan 1, 2030?** | ✗ NO | Outside training range; unreliable |
+| **Can I predict any province?** | ❓ PARTIAL | Model trained on Cambodia data; location-specific |
+
+---
+
+### What You NEED to Make a Prediction
+
+The model requires **current day's weather data**:
+
+```
+To predict: Tomorrow's max temperature
+
+You must provide:
+✓ Today's minimum temperature (actual or forecast)
+✓ Today's rainfall (mm)
+✓ Today's wind speed (km/h)
+✓ Yesterday's maximum temperature (from history)
+✓ Yesterday's rainfall (from history)
+✓ The date (year, month, day)
+✓ Province location
+```
+
+❌ **You CANNOT:**
+- Predict purely from date alone
+- Predict without weather inputs
+- Predict beyond the test period (past April 2026)
+- Predict for dates before January 2015
+
+---
+
+### Real-World Usage Scenario
+
+**VALID Prediction:**
+```
+Date: April 15, 2026
+Province: Phnom Penh
+"Based on today's weather (min_temp=24°C, rain=0mm, wind=10km/h)
+and yesterday's weather (max_temp=33°C, rain=0mm),
+the model predicts tomorrow's max temp = 33.5°C (±2.77°C error)"
+```
+
+**INVALID Prediction:**
+```
+"What's the temperature on July 4, 2030?"
+Response: Cannot predict - date is outside training data (2015-2026)
+
+"What's tomorrow's temperature?"
+Response: Need current/yesterday's weather data to calculate
+```
+
+---
+
+## 6. KEY FINDINGS & OBSERVATIONS
 
 ### ⚠️ FINDING 1: SIGNIFICANT OVERFITTING
 
@@ -209,7 +275,7 @@ rain_lag1:      18.06%  █████
 
 ---
 
-## 6. SAMPLE PREDICTIONS
+## 7. SAMPLE PREDICTIONS
 
 ### First 15 Test Set Predictions
 
@@ -237,7 +303,7 @@ Actual (C)    Predicted (C)    Error (C)    Assessment
 
 ---
 
-## 7. STATISTICAL SUMMARY
+## 8. STATISTICAL SUMMARY
 
 ### Residual Distribution
 
@@ -264,7 +330,7 @@ wind_speed:        3.8      11.5     14.4     18.0     45.9 kmh
 
 ---
 
-## 8. CONCLUSIONS
+## 9. CONCLUSIONS
 
 ### What's Working ✓
 1. ✓ Temporal patterns in temperature are captured for recent historical data
@@ -281,7 +347,7 @@ wind_speed:        3.8      11.5     14.4     18.0     45.9 kmh
 
 ---
 
-## 9. RECOMMENDATIONS FOR IMPROVEMENT
+## 10. RECOMMENDATIONS FOR IMPROVEMENT
 
 ### Short-term (Quick Wins)
 

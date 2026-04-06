@@ -138,9 +138,30 @@ You can also open the model-comparison notebooks:
 
 ```
 notebooks/linear_regression/linear_regression.ipynb
-notebooks/dicision_tree/dicision_tree.ipynb
-notebooks/raindom_forest/random_forest.ipynb
+notebooks/decision_tree/decision_tree.ipynb
+notebooks/random_forest/random_forest.ipynb
 ```
+
+### 4️⃣ Train production model artifact
+
+```bash
+python -m src.models.train --target temp_max
+```
+
+This creates:
+
+```
+artifacts/models/weather_model.joblib
+artifacts/preprocessors/model_metadata.json
+```
+
+### 5️⃣ Run Gradio app
+
+```bash
+python app/gradio_app.py
+```
+
+Open the local Gradio URL shown in your terminal.
 
 ---
 
@@ -149,16 +170,30 @@ notebooks/raindom_forest/random_forest.ipynb
 ```
 cambodia-weather-forecast-analysis/
 │
-├── data/                           # Weather dataset CSV files
+├── data/                           # Raw and processed weather data
+│   ├── raw/
+│   ├── processed/
+│   └── cambodia_weather.csv
 ├── notebooks/                      # EDA and modeling notebooks
 │   ├── weather_forecast_analysis.ipynb
 │   ├── linear_regression/
-│   ├── dicision_tree/
-│   └── raindom_forest/
+│   ├── decision_tree/
+│   └── random_forest/
+├── src/                            # Reusable ML pipeline code
+│   ├── data/
+│   ├── models/
+│   └── utils/
+├── app/
+│   └── gradio_app.py               # Inference UI
+├── artifacts/
+│   ├── models/
+│   └── preprocessors/
+├── tests/
+│   ├── test_preprocess.py
+│   └── test_predict.py
 ├── MODEL_ANALYSIS.md               # Model interpretation and findings
 ├── README.md
 ├── requirements.txt
-├── requirement.txt                 # Legacy copy kept for compatibility
 └── .gitignore
 ```
 
@@ -181,6 +216,16 @@ cambodia-weather-forecast-analysis/
 3. Train and evaluate multiple regression baselines.
 4. Compare results using RMSE, MAE, and R2.
 5. Document interpretation, limitations, and improvement ideas.
+
+---
+
+# 🚀 Deployment-Ready Workflow
+
+1. Prototype features/models in notebooks.
+2. Move reusable logic into `src/` modules.
+3. Train and save model artifacts into `artifacts/`.
+4. Serve predictions through `app/gradio_app.py`.
+5. Add tests in `tests/` for preprocessing and inference behavior.
 
 ---
 

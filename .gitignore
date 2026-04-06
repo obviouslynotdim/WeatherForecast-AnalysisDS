@@ -1,1 +1,13 @@
-data/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Trained artifacts and runtime outputs
+artifacts/models/*.joblib
+artifacts/preprocessors/*.json

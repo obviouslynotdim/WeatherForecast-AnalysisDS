@@ -6,3 +6,6 @@ requests
 scikit-learn
 jupyter
 plotly
+joblib
+gradio
+pytest
