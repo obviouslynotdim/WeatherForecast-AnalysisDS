@@ -1,9 +1,18 @@
 from __future__ import annotations
 
 import importlib
+import sys
 from datetime import date
+from pathlib import Path
+
+import pandas as pd
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.models.predict import InferenceEngine
+from src.utils.config import DATASET_PATH
 
 
 try:
@@ -17,6 +26,11 @@ except ModuleNotFoundError as exc:
 engine = InferenceEngine()
 provinces = engine.metadata.get("provinces", [])
 metrics = engine.metadata.get("metrics", {})
+
+# Build province-to-coordinates mapping from training data
+_df = pd.read_csv(DATASET_PATH)
+_province_coords = _df.drop_duplicates(subset=["province"])[["province", "lat", "lon"]].set_index("province").to_dict("index")
+province_coordinates = {prov: (_province_coords[prov]["lat"], _province_coords[prov]["lon"]) for prov in provinces if prov in _province_coords}
 
 
 def get_weather_status(rain: float) -> tuple[str, str]:
@@ -54,6 +68,13 @@ def render_temp_card(temp_value: float) -> str:
         f"<div style='font-size:0.95rem;font-weight:700;color:#1f2a37;'>{temp_value}°C</div>"
         "</div></div>"
     )
+
+
+def update_coordinates(selected_province: str) -> tuple[float, float]:
+    """Return (lat, lon) for selected province."""
+    if selected_province in province_coordinates:
+        return province_coordinates[selected_province]
+    return (11.55, 104.91)  # Fallback to Phnom Penh
 
 
 def predict_temp_max(
@@ -105,6 +126,13 @@ with gr.Blocks(title="Cambodia Weather Forecast") as demo:
     with gr.Row():
         output = gr.HTML(value=render_temp_card(0.0), scale=1)
         weather_icon = gr.HTML(value=render_weather_card(*get_weather_status(0.0), 0.0), scale=1)
+
+    # Auto-update lat/lon when province changes
+    province.change(
+        fn=update_coordinates,
+        inputs=[province],
+        outputs=[lat, lon],
+    )
 
     predict_btn.click(
         fn=predict_temp_max,
