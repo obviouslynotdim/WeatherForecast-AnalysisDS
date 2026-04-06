@@ -11,7 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.models.predict import InferenceEngine, MultiModelInferenceEngine
+from src.models.predict import MultiModelInferenceEngine
 from src.utils.config import DATASET_PATH
 
 
@@ -23,18 +23,10 @@ except ModuleNotFoundError as exc:
     ) from exc
 
 
-single_engine = InferenceEngine()
-try:
-    compare_engine = MultiModelInferenceEngine()
-    app_mode = "compare"
-    metadata = compare_engine.metadata
-except (FileNotFoundError, ValueError):
-    compare_engine = None
-    app_mode = "single"
-    metadata = single_engine.metadata
+compare_engine = MultiModelInferenceEngine()
+metadata = compare_engine.metadata
 
 provinces = metadata.get("provinces", [])
-metrics = metadata.get("metrics", {})
 model_labels = {
     "auto": "Auto (Best RMSE)",
     "linear_regression": "Linear Regression",
@@ -145,26 +137,18 @@ def predict_temp_max(
         "province": province,
     }
 
-    if compare_engine is not None:
-        predictions = compare_engine.predict_all(**input_kwargs)
-        best_model = compare_engine.metadata.get("best_model")
-        label_to_key = {v: k for k, v in model_labels.items()}
-        selected_model_key = label_to_key.get(selected_model_label, "auto")
+    predictions = compare_engine.predict_all(**input_kwargs)
+    best_model = compare_engine.metadata.get("best_model")
+    label_to_key = {v: k for k, v in model_labels.items()}
+    selected_model_key = label_to_key.get(selected_model_label, "auto")
 
-        if selected_model_key == "auto":
-            chosen_model = best_model if best_model in predictions else next(iter(predictions))
-        else:
-            chosen_model = selected_model_key if selected_model_key in predictions else next(iter(predictions))
-
-        prediction = predictions[chosen_model]
-        comparison_html = render_comparison_table(predictions, best_model=best_model)
+    if selected_model_key == "auto":
+        chosen_model = best_model if best_model in predictions else next(iter(predictions))
     else:
-        prediction = single_engine.predict(**input_kwargs)
-        comparison_html = (
-            "<div style='padding:10px;border-radius:8px;border:1px solid #e5e7eb;background:#f8fafc;color:#334155;'>"
-            "Comparison artifacts not found. Run: python -m src.models.train_compare"
-            "</div>"
-        )
+        chosen_model = selected_model_key if selected_model_key in predictions else next(iter(predictions))
+
+    prediction = predictions[chosen_model]
+    comparison_html = render_comparison_table(predictions, best_model=best_model)
 
     weather_label, weather_icon = get_weather_status(float(rain))
     return (
@@ -184,14 +168,13 @@ with gr.Blocks(title="Cambodia Weather Forecast") as demo:
 
     with gr.Row():
         model_selector_choices = [model_labels["auto"]]
-        if compare_engine is not None:
-            model_selector_choices.extend(
-                [
-                    model_labels["linear_regression"],
-                    model_labels["decision_tree"],
-                    model_labels["random_forest"],
-                ]
-            )
+        model_selector_choices.extend(
+            [
+                model_labels["linear_regression"],
+                model_labels["decision_tree"],
+                model_labels["random_forest"],
+            ]
+        )
         model_selector = gr.Dropdown(
             choices=model_selector_choices,
             value=model_labels["auto"],
@@ -232,13 +215,8 @@ with gr.Blocks(title="Cambodia Weather Forecast") as demo:
         outputs=[output, weather_icon, comparison],
     )
 
-    if app_mode == "compare" and compare_engine is not None:
-        best_model_key = compare_engine.metadata.get("best_model", "N/A")
-        gr.Markdown(f"Comparison mode active. Best model by RMSE: {best_model_key}")
-    else:
-        gr.Markdown(
-            f"Single model mode. MAE={metrics.get('mae', 'N/A')}, RMSE={metrics.get('rmse', 'N/A')}, R2={metrics.get('r2', 'N/A')}"
-        )
+    best_model_key = compare_engine.metadata.get("best_model", "N/A")
+    gr.Markdown(f"Comparison mode active. Best model by RMSE: {best_model_key}")
 
 
 if __name__ == "__main__":

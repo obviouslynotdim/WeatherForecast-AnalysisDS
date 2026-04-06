@@ -142,20 +142,7 @@ notebooks/decision_tree/decision_tree.ipynb
 notebooks/random_forest/random_forest.ipynb
 ```
 
-### 4️⃣ Train production model artifact
-
-```bash
-python -m src.models.train --target temp_max
-```
-
-This creates:
-
-```
-artifacts/models/weather_model.joblib
-artifacts/preprocessors/model_metadata.json
-```
-
-### 4️⃣.1 Train 3-model comparison artifacts
+### 4️⃣ Train 3-model comparison artifacts
 
 ```bash
 python -m src.models.train_compare --target temp_max
@@ -171,6 +158,12 @@ artifacts/preprocessors/model_comparison_metadata.json
 ```
 
 When these files exist, the Gradio app automatically switches to comparison mode and shows predictions from all three models.
+
+Optional (legacy single-model artifact):
+
+```bash
+python -m src.models.train --target temp_max
+```
 
 ### 5️⃣ Run Gradio app
 
