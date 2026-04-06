@@ -11,3 +11,10 @@ PREPROCESSORS_DIR = ARTIFACTS_DIR / "preprocessors"
 DATASET_PATH = DATA_DIR / "cambodia_weather.csv"
 MODEL_PATH = MODELS_DIR / "weather_model.joblib"
 METADATA_PATH = PREPROCESSORS_DIR / "model_metadata.json"
+
+MODEL_REGISTRY = {
+	"linear_regression": MODELS_DIR / "weather_model_lr.joblib",
+	"decision_tree": MODELS_DIR / "weather_model_dt.joblib",
+	"random_forest": MODELS_DIR / "weather_model_rf.joblib",
+}
+COMPARE_METADATA_PATH = PREPROCESSORS_DIR / "model_comparison_metadata.json"

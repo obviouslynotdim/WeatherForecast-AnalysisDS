@@ -155,6 +155,23 @@ artifacts/models/weather_model.joblib
 artifacts/preprocessors/model_metadata.json
 ```
 
+### 4️⃣.1 Train 3-model comparison artifacts
+
+```bash
+python -m src.models.train_compare --target temp_max
+```
+
+This creates:
+
+```
+artifacts/models/weather_model_lr.joblib
+artifacts/models/weather_model_dt.joblib
+artifacts/models/weather_model_rf.joblib
+artifacts/preprocessors/model_comparison_metadata.json
+```
+
+When these files exist, the Gradio app automatically switches to comparison mode and shows predictions from all three models.
+
 ### 5️⃣ Run Gradio app
 
 ```bash
