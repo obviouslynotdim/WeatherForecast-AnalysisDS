@@ -2,7 +2,7 @@
 
 ### Fundamentals of Data Science Project
 
-**Cambodia Academy of Digital Technology (CADT)**
+**Cambodia Academy of Digital Technology (CADT)**  
 Bachelor of Computer Science
 
 ---
@@ -10,232 +10,214 @@ Bachelor of Computer Science
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10-blue?style=for-the-badge&logo=python">
   <img src="https://img.shields.io/badge/Pandas-Data%20Analysis-orange?style=for-the-badge&logo=pandas">
+  <img src="https://img.shields.io/badge/Scikit--Learn-ML-yellow?style=for-the-badge&logo=scikitlearn">
   <img src="https://img.shields.io/badge/Matplotlib-Visualization-green?style=for-the-badge">
   <img src="https://img.shields.io/badge/Open--Meteo-Weather%20API-purple?style=for-the-badge">
 </p>
 
 ---
 
-# 📌 Project Overview
+## 📌 Project Overview
 
-This project analyzes **weather data in Cambodia** using the **Open-Meteo API** to understand climate patterns and support **weather forecasting analysis**.
+This project analyzes Cambodia weather patterns from Open-Meteo data and builds a three-model regression comparison pipeline for next-day maximum temperature prediction.
 
-Instead of static datasets, this project dynamically collects **historical weather data** using API requests and processes it with **Python, Pandas, and Matplotlib**.
-
-The goal is to transform raw API data into **insightful climate trends and forecasting indicators**.
-
----
-
-# 🎯 Objectives
-
-* Collect historical weather data using Open-Meteo API
-* Analyze key indicators such as:
-  - Temperature (max/min)
-  - Rainfall
-  - Wind speed
-* Identify **weather trends over time**
-* Visualize climate patterns
-* Support **basic forecasting insights**
+The workflow includes:
+- API-based historical weather collection
+- Data preparation and quality filtering
+- Exploratory Data Analysis (EDA)
+- Training and evaluation of three models:
+  - Linear Regression
+  - Decision Tree
+  - Random Forest
+- Side-by-side model comparison using RMSE, MAE, and R2
 
 ---
 
-# 🌎 Data Source
+## 🎯 Objectives
 
-Data is collected from:
-
-* **API:** Open-Meteo Weather API  
-* **Website:** https://open-meteo.com/  
-* **Type:** Historical weather data (archive API)
-
----
-
-# 🧠 Methodology
-
-## 1️⃣ Data Collection (API)
-
-* Fetch data using `requests`
-* Loop through multiple Cambodian provinces
-* Collect daily weather data:
-  - Temperature (max/min)
-  - Rainfall
-  - Wind speed
+- Collect historical weather data for multiple Cambodian provinces
+- Analyze temperature, rainfall, and wind behavior over time
+- Engineer reusable forecasting features (time + cyclical + geospatial + province)
+- Train multiple baseline models with a consistent pipeline
+- Compare model performance and expose results in notebooks and Gradio UI
 
 ---
 
-## 2️⃣ Data Preprocessing
+## 🌎 Data Source
 
-* Combine data from all provinces
-* Rename columns for clarity
-* Convert date to datetime format
-* Handle missing values if needed
-
----
-
-## 3️⃣ Exploratory Data Analysis (EDA)
-
-* Analyze weather trends over time
-* Compare provinces
-* Detect unusual patterns
+- API: Open-Meteo Weather API
+- Website: https://open-meteo.com/
+- Type: Historical weather data (archive API)
 
 ---
 
-## 4️⃣ Visualization
+## 🧠 Methodology
 
-Using **Matplotlib**:
+### 1) Data Collection
+- Fetch daily archive data via API requests
+- Loop through selected provinces
+- Store standardized fields: date, temp_max, temp_min, rain, wind_speed, province, lat, lon
 
-* Temperature trends
-* Rainfall patterns
-* Monthly averages
-* Province comparisons
+### 2) Feature Engineering and Cleaning
+- Normalize columns and parse date
+- Add time features: year, month, day, dayofweek
+- Add cyclical features: month_sin, month_cos, dayofweek_sin, dayofweek_cos
+- Apply quality filters (temperature consistency, non-negative rain/wind, Cambodia geo bounds)
+- One-hot encode province
+
+### 3) Modeling
+- Train/test split: random 80/20, seed 42
+- Models:
+  - LinearRegression
+  - DecisionTreeRegressor (max_depth=15)
+  - RandomForestRegressor (n_estimators=220, max_depth=24, min_samples_leaf=2)
+
+### 4) Evaluation
+- Metrics: RMSE, MAE, R2
+- Compare all models from saved metadata in one table and chart set
 
 ---
 
-# 📊 Expected Outcomes
+## 📓 Notebooks
 
-* Understand **climate patterns in Cambodia**
-* Identify **seasonal trends**
-* Provide **visual insights for forecasting**
-* Demonstrate real-world **API-based data science workflow**
+Main notebooks:
+- notebooks/eda.ipynb
+- notebooks/weather_forecast_analysis.ipynb
+- notebooks/model_comparisons.ipynb
+
+Model training notebooks:
+- notebooks/linear_regression/linear_regression.ipynb
+- notebooks/decision_tree/dicision_tree.ipynb
+- notebooks/random_forest/random_forest.ipynb
+
+Model analysis notebooks:
+- notebooks/linear_regression/linear_regression_analysis.ipynb
+- notebooks/decision_tree/decision_tree_analysis.ipynb
+- notebooks/random_forest/random_forest_analysis.ipynb
+
+Notebook summary:
+- NOTEBOOK_ANALYSIS.md
 
 ---
 
-# 👨‍💻 Team Members
+## ⚙️ How to Run
 
-| Kuy Poly         | Chhorn Norakjed | Sophal Chanrat        |
-| ---------------- | --------------- | --------------------- |
-| **Te Chhenghab** | **Hak Kimly**   | **Sao Sethavathanak** |
-
----
-
-# ⚙️ How to Run
-
-### 1️⃣ Clone the repository
+### 1) Clone repository
 
 ```bash
 git clone https://github.com/your-username/cambodia-weather-forecast-analysis.git
 cd cambodia-weather-forecast-analysis
-````
+```
 
-### 2️⃣ Install dependencies
+### 2) Create and activate virtual environment (recommended)
+
+```bash
+python -m venv .venv
+```
+
+PowerShell:
+
+```bash
+.\.venv\Scripts\Activate.ps1
+```
+
+### 3) Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3️⃣ Run Jupyter Notebook
-
-```bash
-jupyter notebook
-```
-
-Open:
-
-```
-notebooks/weather_forecast_analysis.ipynb
-```
-
-You can also open the model-comparison notebooks:
-
-```
-notebooks/linear_regression/linear_regression.ipynb
-notebooks/decision_tree/decision_tree.ipynb
-notebooks/random_forest/random_forest.ipynb
-```
-
-### 4️⃣ Train 3-model comparison artifacts
+### 4) Train all three models and generate comparison artifacts
 
 ```bash
 python -m src.models.train_compare --target temp_max
 ```
 
-This creates:
+Generated artifacts:
 
-```
+```text
 artifacts/models/weather_model_lr.joblib
 artifacts/models/weather_model_dt.joblib
 artifacts/models/weather_model_rf.joblib
 artifacts/preprocessors/model_comparison_metadata.json
 ```
 
-When these files exist, the Gradio app automatically switches to comparison mode and shows predictions from all three models.
-
-Optional (legacy single-model artifact):
+Optional single-model trainer:
 
 ```bash
 python -m src.models.train --target temp_max
 ```
 
-### 5️⃣ Run Gradio app
+### 5) Launch notebooks
+
+```bash
+jupyter notebook
+```
+
+### 6) Launch Gradio app
 
 ```bash
 python app/gradio_app.py
 ```
 
-Open the local Gradio URL shown in your terminal.
+---
+
+## 📊 Visualization Highlights
+
+EDA notebook includes:
+- Province temperature distribution
+- Monthly rainfall trend
+- Yearly temperature trend by province
+- Correlation heatmap of weather/time features
+- Monthly temperature seasonality boxplot
+
+Model comparison notebook includes:
+- Comparison table (RMSE, MAE, R2, row counts, best model flag)
+- RMSE bar chart
+- MAE bar chart
+- R2 bar chart
 
 ---
 
-# 📁 Folder Structure
+## 📁 Folder Structure
 
-```
-cambodia-weather-forecast-analysis/
-│
-├── data/                           # Raw and processed weather data
-│   ├── raw/
-│   ├── processed/
-│   └── cambodia_weather.csv
-├── notebooks/                      # EDA and modeling notebooks
-│   ├── weather_forecast_analysis.ipynb
-│   ├── linear_regression/
-│   ├── decision_tree/
-│   └── random_forest/
-├── src/                            # Reusable ML pipeline code
-│   ├── data/
-│   ├── models/
-│   └── utils/
+```text
+WeatherForecast-AnalysisDS/
 ├── app/
-│   └── gradio_app.py               # Inference UI
+│   └── gradio_app.py
 ├── artifacts/
 │   ├── models/
 │   └── preprocessors/
+├── data/
+│   ├── raw/
+│   └── cambodia_weather.csv
+├── notebooks/
+│   ├── _shared/
+│   │   └── notebook_utils.py
+│   ├── decision_tree/
+│   ├── linear_regression/
+│   ├── random_forest/
+│   ├── eda.ipynb
+│   ├── model_comparisons.ipynb
+│   └── weather_forecast_analysis.ipynb
+├── src/
+│   ├── data/
+│   ├── models/
+│   └── utils/
 ├── tests/
-│   ├── test_preprocess.py
-│   └── test_predict.py
-├── MODEL_ANALYSIS.md               # Model interpretation and findings
+├── MODEL_ANALYSIS.md
+├── NOTEBOOK_ANALYSIS.md
 ├── README.md
-├── requirements.txt
-└── .gitignore
+└── requirements.txt
 ```
 
 ---
 
-# 🌟 Features
+## 👨‍💻 Team Members
 
-* ✅ Real-time API-based data collection
-* ✅ Multi-province Cambodia dataset
-* ✅ Automated data pipeline
-* ✅ EDA + visualization
-* ✅ Regression model comparison and evaluation
-
----
-
-# 🧾 Workflow Summary
-
-1. Collect and consolidate weather data from Open-Meteo API.
-2. Perform data cleaning and exploratory analysis in the main notebook.
-3. Train and evaluate multiple regression baselines.
-4. Compare results using RMSE, MAE, and R2.
-5. Document interpretation, limitations, and improvement ideas.
-
----
-
-# 🚀 Deployment-Ready Workflow
-
-1. Prototype features/models in notebooks.
-2. Move reusable logic into `src/` modules.
-3. Train and save model artifacts into `artifacts/`.
-4. Serve predictions through `app/gradio_app.py`.
-5. Add tests in `tests/` for preprocessing and inference behavior.
+| Kuy Poly         | Chhorn Norakjed | Sophal Chanrat        |
+| ---------------- | --------------- | --------------------- |
+| **Te Chhenghab** | **Hak Kimly**   | **Sao Sethavathanak** |
 
 ---
 
