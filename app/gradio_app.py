@@ -89,17 +89,17 @@ def render_comparison_table(predictions: dict[str, float], best_model: str | Non
         best_badge = "<span style='color:#0f766e;font-weight:700'>(best)</span>" if model_key == best_model else ""
         rows.append(
             "<tr>"
-            f"<td style='padding:8px;border-bottom:1px solid #e5e7eb'>{label} {best_badge}</td>"
-            f"<td style='padding:8px;border-bottom:1px solid #e5e7eb;text-align:right'>{value:.2f} C</td>"
+            f"<td style='padding:8px;border-bottom:1px solid #e5e7eb;color:#0f172a;background:#ffffff'>{label} {best_badge}</td>"
+            f"<td style='padding:8px;border-bottom:1px solid #e5e7eb;text-align:right;color:#0f172a;background:#ffffff'>{value:.2f} C</td>"
             "</tr>"
         )
 
     return (
         "<div style='width:100%;padding:12px;border-radius:8px;border:1px solid #dbe2ea;"
-        "background:linear-gradient(135deg,#ffffff,#f8fafc);box-sizing:border-box;'>"
+        "background:linear-gradient(135deg,#ffffff,#f8fafc);box-sizing:border-box;color:#0f172a;'>"
         "<div style='font-size:0.9rem;font-weight:700;color:#1f2a37;margin-bottom:8px;'>Model Comparison</div>"
-        "<table style='width:100%;border-collapse:collapse;font-size:0.85rem;color:#334155'>"
-        "<thead><tr><th style='text-align:left;padding:8px'>Model</th><th style='text-align:right;padding:8px'>Predicted Temp Max</th></tr></thead>"
+        "<table style='width:100%;border-collapse:collapse;font-size:0.85rem;color:#0f172a;background:#ffffff;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;'>"
+        "<thead><tr><th style='text-align:left;padding:8px;color:#0f172a;background:#f1f5f9;border-bottom:1px solid #dce3ec'>Model</th><th style='text-align:right;padding:8px;color:#0f172a;background:#f1f5f9;border-bottom:1px solid #dce3ec'>Predicted Temp Max</th></tr></thead>"
         f"<tbody>{''.join(rows)}</tbody>"
         "</table></div>"
     )
