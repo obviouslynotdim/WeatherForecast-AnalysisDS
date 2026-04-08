@@ -77,34 +77,6 @@ def render_temp_card(temp_value: float) -> str:
     )
 
 
-def render_comparison_table(predictions: dict[str, float], best_model: str | None = None) -> str:
-    model_labels = {
-        "linear_regression": "Linear Regression",
-        "decision_tree": "Decision Tree",
-        "random_forest": "Random Forest",
-    }
-    rows = []
-    for model_key, value in predictions.items():
-        label = model_labels.get(model_key, model_key.replace("_", " ").title())
-        best_badge = "<span style='color:#0f766e;font-weight:700'>(best)</span>" if model_key == best_model else ""
-        rows.append(
-            "<tr>"
-            f"<td style='padding:8px;border-bottom:1px solid #e5e7eb'>{label} {best_badge}</td>"
-            f"<td style='padding:8px;border-bottom:1px solid #e5e7eb;text-align:right'>{value:.2f} C</td>"
-            "</tr>"
-        )
-
-    return (
-        "<div style='width:100%;padding:12px;border-radius:8px;border:1px solid #dbe2ea;"
-        "background:linear-gradient(135deg,#ffffff,#f8fafc);box-sizing:border-box;'>"
-        "<div style='font-size:0.9rem;font-weight:700;color:#1f2a37;margin-bottom:8px;'>Model Comparison</div>"
-        "<table style='width:100%;border-collapse:collapse;font-size:0.85rem;color:#334155'>"
-        "<thead><tr><th style='text-align:left;padding:8px'>Model</th><th style='text-align:right;padding:8px'>Predicted Temp Max</th></tr></thead>"
-        f"<tbody>{''.join(rows)}</tbody>"
-        "</table></div>"
-    )
-
-
 def update_coordinates(selected_province: str) -> tuple[float, float]:
     """Return (lat, lon) for selected province."""
     if selected_province in province_coordinates:
@@ -148,19 +120,16 @@ def predict_temp_max(
         chosen_model = selected_model_key if selected_model_key in predictions else next(iter(predictions))
 
     prediction = predictions[chosen_model]
-    comparison_html = render_comparison_table(predictions, best_model=best_model)
-
     weather_label, weather_icon = get_weather_status(float(rain))
     return (
         render_temp_card(round(prediction, 2)),
         render_weather_card(weather_label, weather_icon, rain),
-        comparison_html,
     )
 
 
 with gr.Blocks(title="Cambodia Weather Forecast") as demo:
     gr.Markdown("# Cambodia Weather Prediction ☀️")
-    gr.Markdown("Predict next expected max temperature and compare 3 models side by side.")
+    gr.Markdown("Predict next expected max temperature.")
 
     with gr.Row():
         input_date = gr.Textbox(label="Date", value=str(date.today()), placeholder="YYYY-MM-DD")
@@ -197,11 +166,6 @@ with gr.Blocks(title="Cambodia Weather Forecast") as demo:
         output = gr.HTML(value=render_temp_card(0.0), scale=1)
         weather_icon = gr.HTML(value=render_weather_card(*get_weather_status(0.0), 0.0), scale=1)
 
-    with gr.Row():
-        comparison = gr.HTML(
-            value="<div style='padding:10px;border-radius:8px;border:1px solid #e5e7eb;background:#f8fafc;color:#334155;'>No prediction yet.</div>"
-        )
-
     # Auto-update lat/lon when province changes
     province.change(
         fn=update_coordinates,
@@ -212,11 +176,8 @@ with gr.Blocks(title="Cambodia Weather Forecast") as demo:
     predict_btn.click(
         fn=predict_temp_max,
         inputs=[input_date, province, model_selector, temp_min, rain, wind_speed, lat, lon],
-        outputs=[output, weather_icon, comparison],
+        outputs=[output, weather_icon],
     )
-
-    best_model_key = compare_engine.metadata.get("best_model", "N/A")
-    gr.Markdown(f"Comparison mode active. Best model by RMSE: {best_model_key}")
 
 
 if __name__ == "__main__":
